@@ -5,6 +5,7 @@
  */
 package bank.server;
 
+import RemoteObserver.portsAndIps;
 import bank.bankieren.Bank;
 import bank.gui.BankierClient;
 import bank.internettoegang.Balie;

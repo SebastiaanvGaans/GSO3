@@ -20,14 +20,12 @@ public class Bankiersessie extends UnicastRemoteObject implements
     private int reknr;
     private IBank bank;
 
-    BasicPublisher bp;
 
     public Bankiersessie(int reknr, IBank bank) throws RemoteException {
         laatsteAanroep = System.currentTimeMillis();
         this.reknr = reknr;
         this.bank = bank;
 
-        bp = new BasicPublisher(new String[]{"Rekeningen"});
     }
 
     public boolean isGeldig() {
@@ -48,7 +46,6 @@ public class Bankiersessie extends UnicastRemoteObject implements
         if (!bedrag.isPositive()) {
             throw new RuntimeException("amount must be positive");
         }
-        bp.inform(reknr,String.valueOf(bestemming), null, bedrag);
         return bank.maakOver(reknr, bestemming, bedrag);
     }
 
@@ -72,18 +69,6 @@ public class Bankiersessie extends UnicastRemoteObject implements
     @Override
     public void logUit() throws RemoteException {
         UnicastRemoteObject.unexportObject(this, true);
-    }
-
-    @Override
-    public void addListener(RemotePropertyListener listener, String property) throws RemoteException {
-        bp.addProperty(property);
-        bp.addListener(listener, property);
-    }
-
-    @Override
-    public void removeListener(RemotePropertyListener listener, String property) throws RemoteException {
-        bp.removeListener(listener, property);
-        bp.removeProperty(property);
     }
 
 }
