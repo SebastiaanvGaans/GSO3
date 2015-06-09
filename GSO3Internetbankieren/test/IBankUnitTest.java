@@ -96,9 +96,6 @@ public class IBankUnitTest {
         } catch (NumberDoesntExistException ex) {
             fail("Cant make a valid transaction");
         }
-        
-        
-        //TODO checken afschrijven
     }
     
     @Test

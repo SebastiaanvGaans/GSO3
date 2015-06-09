@@ -54,11 +54,17 @@ public class IBankierSessieTest {
     @After
     public void tearDown() {
     }
-
     @Test
     public void isGeldigTest(){
-        //TODO
-        //HOWTODOTHIS?
+        if(!sessie.isGeldig())
+            fail("Sessie is ongeldig terwijl de geldigheidsduur niet verstreken is");
+        try {
+            Thread.sleep(600000);
+            if(!sessie.isGeldig())
+            fail("Sessie is geldig terwijl de geldigheidsduur verstreken is");
+        } catch (InterruptedException ex) {
+            Logger.getLogger(IBankierSessieTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Test
