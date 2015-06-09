@@ -54,16 +54,22 @@ public class IBankierSessieTest {
     @After
     public void tearDown() {
     }
-
     @Test
     public void isGeldigTest(){
-        //TODO
-        //HOWTODOTHIS?
+        if(!sessie.isGeldig())
+            fail("Sessie is ongeldig terwijl de geldigheidsduur niet verstreken is");
+        try {
+            Thread.sleep(600000);
+            if(!sessie.isGeldig())
+            fail("Sessie is geldig terwijl de geldigheidsduur verstreken is");
+        } catch (InterruptedException ex) {
+            Logger.getLogger(IBankierSessieTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Test
     public void maakOverTest(){
-        Money money1 = new Money(0 , Money.EURO);
+        Money money1 = new Money(10 , Money.EURO);
         
         try{
             sessie.maakOver(rekeningNummer, money1);
@@ -77,6 +83,8 @@ public class IBankierSessieTest {
     public void logUitTest(){
         try {
             sessie.logUit();
+            if(sessie.isGeldig())
+                fail("Sessie is niet beeindigd");
         } catch (RemoteException ex) {
             fail("failed to end session");
             Logger.getLogger(IBankierSessieTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,6 +99,5 @@ public class IBankierSessieTest {
         }catch(Exception e){
             fail("kan rekening niet ophalen bij bank");
         }
-        
     }
 }
