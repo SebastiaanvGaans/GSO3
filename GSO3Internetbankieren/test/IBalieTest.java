@@ -60,11 +60,10 @@ public class IBalieTest {
         String accountNaam = "";
         
         
-        
         try {
-            assertNull("Naam mag niet null zijn",balie.openRekening(null, "stad", wachtwoord));
-            assertNull("Stad mag niet null zijn",balie.openRekening("naam", null, wachtwoord));
-            assertNull("Wachtwoord mag niet null zijn",balie.openRekening("naam", "stad", null));
+            assertNull("Naam mag niet null zijn",balie.openRekening("", "stad", wachtwoord));
+            assertNull("Stad mag niet null zijn",balie.openRekening("naam", "", wachtwoord));
+            assertNull("Wachtwoord mag niet null zijn",balie.openRekening("naam", "stad", ""));
             
             assertNull("Wachtwoord moet langer dan 4 tekens zijn", balie.openRekening("naam", "stad", foutWachtwoord1));
             assertNull("Wachtwoord moet korter dan 8 tekens zijn", balie.openRekening("naam", "stad", foutWachtwoord2));

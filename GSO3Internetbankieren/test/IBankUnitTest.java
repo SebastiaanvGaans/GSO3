@@ -50,19 +50,29 @@ public class IBankUnitTest {
     // public void hello() {}
     
     @Test
-    public void openRekeningTest(){
+    public void RekeningTest(){
         int rekeningNummer = bank.openRekening("testNaam", "testStad");
         if(rekeningNummer == -1){
             fail("combinatie van naam en plaats niet uniek/leeg");
         }
+        
+        IRekening rekening = bank.getRekening(rekeningNummer);
+        IRekening rekening2 = bank.getRekening( 0);
+        
+        assertNotNull("bestaande rekening onbekend", rekening);
+        assertNull("niet bestaande rekening retourneerd geen null", rekening2);
+        
+        assertEquals("Opgehaalde rekening heeft ander nummer",rekeningNummer, rekening.getNr());
+        assertEquals("Opgehaalde rekening's eigenaar heeft een andere naam", "testNaam",rekening.getEigenaar().getNaam());
+        assertEquals("Opgehaalde rekening's eigenaar heeft een andere stad", "testStad",rekening.getEigenaar().getPlaats());
     }
     
     @Test
     public void maakOverTest() {
         int rekeningNummer1 = bank.openRekening("testNaam", "testStad");
         int rekeningNummer2 =  bank.openRekening("NameTest", "StadTest");
-        Money money1 = new Money(0 , Money.EURO);
-        Money money2 = new Money(-10, Money.EURO);
+        Money money1 = new Money(1000, Money.EURO);
+        Money money2 = new Money(-1000, Money.EURO);
         
         try{
             bank.maakOver(rekeningNummer1, rekeningNummer1, money1);
@@ -75,23 +85,20 @@ public class IBankUnitTest {
         }catch(Exception e){}
         
         try {
+            long vorigSaldoRekening1 = bank.getRekening(rekeningNummer1).getSaldo().getCents() - 1000;
+            long vorigSaldoRekening2 = bank.getRekening(rekeningNummer2).getSaldo().getCents() + 1000;
+            
+            
             assertTrue("Cant make a valid transaction", bank.maakOver(rekeningNummer1, rekeningNummer2, money1));
+            assertEquals("Saldo source niet goed bijgewerkt",vorigSaldoRekening1 ,bank.getRekening(rekeningNummer1).getSaldo().getCents());
+            assertEquals("Saldo destination niet goed bijgewerkt",vorigSaldoRekening2 ,bank.getRekening(rekeningNummer2).getSaldo().getCents());            
+            
         } catch (NumberDoesntExistException ex) {
             fail("Cant make a valid transaction");
         }
         
         
-    }
-    
-    @Test
-    public void getRekening(){
-        int rekeningNummer = bank.openRekening("testNaam", "testStad");
-        
-        IRekening rekening = bank.getRekening(rekeningNummer);
-        IRekening rekening2 = bank.getRekening( 0);
-        
-        assertNotNull("bestaande rekening onbekend", rekening);
-        assertNull("niet bestaande rekening retourneerd geen null", rekening2);
+        //TODO checken afschrijven
     }
     
     @Test

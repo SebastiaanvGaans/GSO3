@@ -63,7 +63,7 @@ public class IBankierSessieTest {
     
     @Test
     public void maakOverTest(){
-        Money money1 = new Money(0 , Money.EURO);
+        Money money1 = new Money(10 , Money.EURO);
         
         try{
             sessie.maakOver(rekeningNummer, money1);
@@ -77,6 +77,8 @@ public class IBankierSessieTest {
     public void logUitTest(){
         try {
             sessie.logUit();
+            if(sessie.isGeldig())
+                fail("Sessie is niet beeindigd");
         } catch (RemoteException ex) {
             fail("failed to end session");
             Logger.getLogger(IBankierSessieTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,6 +93,5 @@ public class IBankierSessieTest {
         }catch(Exception e){
             fail("kan rekening niet ophalen bij bank");
         }
-        
     }
 }
