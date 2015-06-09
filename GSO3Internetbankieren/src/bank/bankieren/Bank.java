@@ -1,26 +1,34 @@
 package bank.bankieren;
 
+import RemoteObserver.BasicPublisher;
+import RemoteObserver.RemotePropertyListener;
+import RemoteObserver.RemotePublisher;
 import fontys.util.*;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-public class Bank implements IBank {
+public class Bank implements IBank, RemotePublisher{
 
 	/**
 	 * 
 	 */
+         BasicPublisher bp;
+         
 	private static final long serialVersionUID = -8728841131739353765L;
 	private Map<Integer,IRekeningTbvBank> accounts;
 	private Collection<IKlant> clients;
 	private int nieuwReknr;
 	private String name;
 
-	public Bank(String name) {
+	public Bank(String name)
+        {
 		accounts = new HashMap<Integer,IRekeningTbvBank>();
 		clients = new ArrayList<IKlant>();
 		nieuwReknr = 100000000;	
-		this.name = name;	
+		this.name = name;
+                bp = new BasicPublisher(new String[]{"Rekeningen"});
 	}
 
 	public synchronized int openRekening(String name, String city) {
@@ -82,5 +90,18 @@ public class Bank implements IBank {
 	public String getName() {
 		return name;
 	}
+
+    @Override
+    public void addListener(RemotePropertyListener listener, String property) throws RemoteException {
+        bp.addProperty(property);
+        bp.addListener(listener, property);
+    }
+
+    @Override
+    public void removeListener(RemotePropertyListener listener, String property) throws RemoteException {
+        bp.removeProperty(property);
+        bp.removeListener(listener, property);
+    }
+
 
 }
