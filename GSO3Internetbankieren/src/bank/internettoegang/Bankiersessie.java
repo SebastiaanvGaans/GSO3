@@ -13,7 +13,7 @@ import fontys.util.InvalidSessionException;
 import fontys.util.NumberDoesntExistException;
 
 public class Bankiersessie extends UnicastRemoteObject implements
-        IBankiersessie, RemoteObserver.RemotePublisher {
+        IBankiersessie {
 
     private static final long serialVersionUID = 1L;
     private long laatsteAanroep;
@@ -48,7 +48,7 @@ public class Bankiersessie extends UnicastRemoteObject implements
         if (!bedrag.isPositive()) {
             throw new RuntimeException("amount must be positive");
         }
-
+        bp.inform(reknr,String.valueOf(bestemming), null, bedrag);
         return bank.maakOver(reknr, bestemming, bedrag);
     }
 
@@ -82,8 +82,8 @@ public class Bankiersessie extends UnicastRemoteObject implements
 
     @Override
     public void removeListener(RemotePropertyListener listener, String property) throws RemoteException {
-        bp.removeProperty(property);
         bp.removeListener(listener, property);
+        bp.removeProperty(property);
     }
 
 }

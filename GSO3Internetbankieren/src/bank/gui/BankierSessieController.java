@@ -11,11 +11,14 @@ import bank.internettoegang.IBalie;
 import bank.internettoegang.IBankiersessie;
 import fontys.util.InvalidSessionException;
 import fontys.util.NumberDoesntExistException;
+import java.beans.PropertyChangeEvent;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,7 +32,7 @@ import javafx.scene.control.TextField;
  *
  * @author frankcoenen
  */
-public class BankierSessieController implements Initializable {
+public class BankierSessieController implements Initializable , RemoteObserver.RemotePropertyListener{
 
     @FXML
     private Hyperlink hlLogout;
@@ -60,12 +63,15 @@ public class BankierSessieController implements Initializable {
         this.application = application;
         IRekening rekening = null;
         try {
+            
+            UnicastRemoteObject.exportObject(this, 9889);
             rekening = sessie.getRekening();
             tfAccountNr.setText(rekening.getNr() + "");
             tfBalance.setText(rekening.getSaldo() + "");
             String eigenaar = rekening.getEigenaar().getNaam() + " te "
                     + rekening.getEigenaar().getPlaats();
             tfNameCity.setText(eigenaar);
+            sessie.addListener(this, String.valueOf(rekening.getNr()));
         } catch (InvalidSessionException ex) {
             taMessage.setText("bankiersessie is verlopen");
             Logger.getLogger(BankierSessieController.class.getName()).log(Level.SEVERE, null, ex);
@@ -110,5 +116,15 @@ public class BankierSessieController implements Initializable {
             e1.printStackTrace();
             taMessage.setText(e1.getMessage());
         }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) throws RemoteException {
+         Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                taMessage.setText(evt.toString());
+            }
+        });
     }
 }
