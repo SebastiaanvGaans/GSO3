@@ -9,12 +9,11 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-public class Bank implements IBank, RemotePublisher{
+public class Bank implements IBank{
 
 	/**
 	 * 
 	 */
-         BasicPublisher bp;
          
 	private static final long serialVersionUID = -8728841131739353765L;
 	private Map<Integer,IRekeningTbvBank> accounts;
@@ -28,7 +27,6 @@ public class Bank implements IBank, RemotePublisher{
 		clients = new ArrayList<IKlant>();
 		nieuwReknr = 100000000;	
 		this.name = name;
-                bp = new BasicPublisher(new String[]{"Rekeningen"});
 	}
 
 	public synchronized int openRekening(String name, String city) {
@@ -91,17 +89,6 @@ public class Bank implements IBank, RemotePublisher{
 		return name;
 	}
 
-    @Override
-    public void addListener(RemotePropertyListener listener, String property) throws RemoteException {
-        bp.addProperty(property);
-        bp.addListener(listener, property);
-    }
-
-    @Override
-    public void removeListener(RemotePropertyListener listener, String property) throws RemoteException {
-        bp.removeProperty(property);
-        bp.removeListener(listener, property);
-    }
 
 
 }
