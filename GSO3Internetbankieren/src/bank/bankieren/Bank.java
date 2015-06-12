@@ -3,6 +3,7 @@ package bank.bankieren;
 import RemoteObserver.BasicPublisher;
 import RemoteObserver.RemotePropertyListener;
 import RemoteObserver.RemotePublisher;
+import bank.centraleBank.ICentraleBank;
 import fontys.util.*;
 
 import java.rmi.RemoteException;
@@ -20,19 +21,23 @@ public class Bank implements IBank{
 	private Collection<IKlant> clients;
 	private int nieuwReknr;
 	private String name;
+        private ICentraleBank centrale;
 
-	public Bank(String name)
+	public Bank(String name, ICentraleBank centrale)
         {
 		accounts = new HashMap<Integer,IRekeningTbvBank>();
 		clients = new ArrayList<IKlant>();
 		nieuwReknr = 100000000;	
 		this.name = name;
+                this.centrale = centrale;
 	}
 
 	public synchronized int openRekening(String name, String city) {
 		if (name.equals("") || city.equals(""))
 			return -1;
 
+                nieuwReknr = centrale.nextBankNr();
+                
 		IKlant klant = getKlant(name, city);
 		IRekeningTbvBank account = new Rekening(nieuwReknr, klant, Money.EURO);
 		accounts.put(nieuwReknr,account);
@@ -67,16 +72,26 @@ public class Bank implements IBank{
 			throw new NumberDoesntExistException("account " + source
 					+ " unknown at " + name);
 
-		Money negative = Money.difference(new Money(0, money.getCurrency()),
+		IRekeningTbvBank dest_account = (IRekeningTbvBank) getRekening(destination);
+                
+                if(dest_account == null){
+                    dest_account = (IRekeningTbvBank) centrale.getRekening(destination);
+                    if(dest_account == null){
+                        throw new NumberDoesntExistException("account " + destination
+					+ " unknown at " + name);
+                    }
+                    else{
+                        return centrale.maakOver(source, destination, money);
+                    }
+                }
+
+                
+                Money negative = Money.difference(new Money(0, money.getCurrency()),
 				money);
 		boolean success = source_account.muteer(negative);
 		if (!success)
 			return false;
-
-		IRekeningTbvBank dest_account = (IRekeningTbvBank) getRekening(destination);
-		if (dest_account == null) 
-			throw new NumberDoesntExistException("account " + destination
-					+ " unknown at " + name);
+			
 		success = dest_account.muteer(money);
 
 		if (!success) // rollback

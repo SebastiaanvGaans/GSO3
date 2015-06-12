@@ -7,6 +7,8 @@ package bank.server;
 
 import RemoteObserver.portsAndIps;
 import bank.bankieren.Bank;
+import bank.centraleBank.CentraleBank;
+import bank.centraleBank.ICentraleBank;
 import bank.gui.BankierClient;
 import bank.internettoegang.Balie;
 import bank.internettoegang.IBalie;
@@ -36,6 +38,7 @@ public class BalieServer extends Application {
     private final double MINIMUM_WINDOW_WIDTH = 600.0;
     private final double MINIMUM_WINDOW_HEIGHT = 200.0;
     private String nameBank;
+    private ICentraleBank centrale;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -45,6 +48,9 @@ public class BalieServer extends Application {
             stage.setTitle("Bankieren");
             stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
             stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+            
+            centrale = new CentraleBank();
+            
             gotoBankSelect();
 
             primaryStage.show();
@@ -67,8 +73,15 @@ public class BalieServer extends Application {
                 props.store(out, null);
                 out.close();
                 java.rmi.registry.LocateRegistry.createRegistry(port);
-                IBalie balie = new Balie(new Bank(nameBank));
-                Naming.rebind(nameBank, balie);
+                
+                
+                Bank bank = new Bank(nameBank, centrale);
+                IBalie balie = new Balie(bank);
+                
+                if(centrale.addBank(bank)){
+                    Naming.rebind(nameBank, balie);
+                    return true;
+                }
                
                 return true;
 
