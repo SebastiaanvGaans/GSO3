@@ -8,6 +8,7 @@ import bank.bankieren.Bank;
 import bank.bankieren.IBank;
 import bank.bankieren.IRekening;
 import bank.bankieren.Money;
+import bank.centraleBank.CentraleBank;
 import bank.internettoegang.Bankiersessie;
 import bank.internettoegang.IBankiersessie;
 import java.rmi.RemoteException;
@@ -42,7 +43,7 @@ public class IBankierSessieTest {
     
     @Before
     public void setUp() {
-        bank = new Bank("TestBank");
+        bank = new Bank("TestBank", new CentraleBank());
         rekeningNummer = bank.openRekening("testNaam", "testStad");
         try {
             sessie = new Bankiersessie(rekeningNummer, bank);
@@ -56,14 +57,19 @@ public class IBankierSessieTest {
     }
     @Test
     public void isGeldigTest(){
+        try{
         if(!sessie.isGeldig())
             fail("Sessie is ongeldig terwijl de geldigheidsduur niet verstreken is");
+        }
+        catch(Exception e){
+            fail("Kan sessie niet ophalen");
+        }
         try {
             Thread.sleep(600000);
             if(!sessie.isGeldig())
             fail("Sessie is geldig terwijl de geldigheidsduur verstreken is");
-        } catch (InterruptedException ex) {
-            Logger.getLogger(IBankierSessieTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            fail("Kan sessie niet ophalen");
         }
     }
     

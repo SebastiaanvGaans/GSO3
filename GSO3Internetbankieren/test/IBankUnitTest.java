@@ -5,6 +5,7 @@
  */
 
 import bank.bankieren.*;
+import bank.centraleBank.CentraleBank;
 import fontys.util.NumberDoesntExistException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +37,7 @@ public class IBankUnitTest {
     
     @Before
     public void setUp() {
-        bank = new Bank("TestBank");
+        bank = new Bank("TestBank", new CentraleBank());
     }
     
     @After
@@ -73,6 +74,7 @@ public class IBankUnitTest {
         int rekeningNummer2 =  bank.openRekening("NameTest", "StadTest");
         Money money1 = new Money(1000, Money.EURO);
         Money money2 = new Money(-1000, Money.EURO);
+        Money money3 = new Money(100000000, Money.EURO);
         
         try{
             bank.maakOver(rekeningNummer1, rekeningNummer1, money1);
@@ -82,6 +84,11 @@ public class IBankUnitTest {
         try{
             bank.maakOver(rekeningNummer1, rekeningNummer2, money2);
             fail("Amount to be transferred may not be negative");
+        }catch(Exception e){}
+        
+        try{
+            bank.maakOver(rekeningNummer1, rekeningNummer2, money3);
+            fail("Amount to be transferred may not be more than KREDIETLIMIET");
         }catch(Exception e){}
         
         try {

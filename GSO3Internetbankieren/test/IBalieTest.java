@@ -6,6 +6,7 @@
 
 import bank.bankieren.Bank;
 import bank.bankieren.IBank;
+import bank.centraleBank.CentraleBank;
 import bank.internettoegang.Balie;
 import bank.internettoegang.IBalie;
 import bank.internettoegang.IBankiersessie;
@@ -40,7 +41,8 @@ public class IBalieTest {
     
     @Before
     public void setUp() {
-        bank = new Bank("TestBank");
+        
+        bank = new Bank("TestBank", new CentraleBank());
         try {
             balie = new Balie(bank);
         } catch (RemoteException ex) {
