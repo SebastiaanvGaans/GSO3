@@ -9,6 +9,7 @@ import bank.bankieren.IBank;
 import bank.bankieren.IRekening;
 import bank.bankieren.*;
 import bank.bankieren.Money;
+import fontys.util.NumberDoesntExistException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,24 +29,29 @@ public class CentraleBank implements ICentraleBank {
     @Override
     public boolean maakOver(int zender, int ontvanger, Money bedrag) {
 
-        IRekeningTbvBank rekeningZender = (IRekeningTbvBank) getRekening(zender);
-        IRekeningTbvBank rekeningOntvanger = (IRekeningTbvBank) getRekening(ontvanger);
-
-        if (rekeningZender == null || rekeningOntvanger == null) {
-            return false;
+                
+        IBank zenderBank = null;
+        IBank ontvangerBank = null;
+        for(IBank bank: banken){
+            if(bank.getRekening(zender) != null)
+                zenderBank = bank;
+            if(bank.getRekening(ontvanger) != null)
+                ontvangerBank = bank;
         }
+        if(zenderBank == null || ontvangerBank == null )
+            return false;
 
         Money negative = Money.difference(new Money(0, bedrag.getCurrency()), bedrag);
-        boolean zenderGelukt = rekeningZender.muteer(negative);
-        boolean ontvangerGelukt = rekeningOntvanger.muteer(bedrag);
+        boolean zenderGelukt = zenderBank.muteerRekening(zender, negative);
+        boolean ontvangerGelukt = ontvangerBank.muteerRekening(ontvanger, bedrag);
 
         if (zenderGelukt && ontvangerGelukt) {
             return true;
         } else if (!zenderGelukt && ontvangerGelukt) {
-            rekeningOntvanger.muteer(negative);
+            ontvangerBank.muteerRekening(ontvanger, negative);
             return false;
         } else if (zenderGelukt && !ontvangerGelukt) {
-            rekeningZender.muteer(bedrag);
+            zenderBank.muteerRekening(zender, bedrag);
             return false;
         } else {
             return false;

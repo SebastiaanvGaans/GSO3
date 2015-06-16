@@ -104,6 +104,13 @@ public class Bank implements IBank{
 		return name;
 	}
 
+    @Override
+    public boolean muteerRekening(int rekeningNummer, Money bedrag) {
+        IRekeningTbvBank rekening = (IRekeningTbvBank) getRekening(rekeningNummer);
+        return rekening.muteer(bedrag);
+         
+    }
+
 
 
 }

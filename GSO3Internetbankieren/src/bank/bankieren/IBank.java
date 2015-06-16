@@ -50,4 +50,6 @@ public interface IBank {
      * @return de naam van deze bank
      */
     String getName();
+    
+    public boolean muteerRekening(int rekenningNummer, Money bedrag);
 }
