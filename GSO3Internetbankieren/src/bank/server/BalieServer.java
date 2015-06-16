@@ -72,8 +72,10 @@ public class BalieServer extends Application {
                 out = new FileOutputStream(nameBank + ".props");
                 props.store(out, null);
                 out.close();
+                try
+                {
                 java.rmi.registry.LocateRegistry.createRegistry(port);
-                
+                }catch(Exception e){}
                 
                 Bank bank = new Bank(nameBank, centrale);
                 IBalie balie = new Balie(bank);
