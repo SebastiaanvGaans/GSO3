@@ -66,8 +66,8 @@ public class IBankierSessieTest {
         }
         try {
             Thread.sleep(600000);
-            if(!sessie.isGeldig())
-            fail("Sessie is geldig terwijl de geldigheidsduur verstreken is");
+            if(sessie.isGeldig())
+                fail("Sessie is geldig terwijl de geldigheidsduur verstreken is");
         } catch (Exception ex) {
             fail("Kan sessie niet ophalen");
         }
