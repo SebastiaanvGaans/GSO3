@@ -6,6 +6,7 @@ import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import bank.bankieren.*;
+import java.beans.PropertyChangeEvent;
 
 public class Balie extends UnicastRemoteObject implements IBalie {
 
@@ -19,6 +20,7 @@ public class Balie extends UnicastRemoteObject implements IBalie {
 
     public Balie(IBank bank) throws RemoteException {
         this.bank = bank;
+        bank.addListener(this, "Balie");
         loginaccounts = new HashMap<String, ILoginAccount>();
         //sessions = new HashSet<IBankiersessie>();
         random = new Random();
@@ -96,5 +98,10 @@ public class Balie extends UnicastRemoteObject implements IBalie {
     {
         bp.inform(this, String.valueOf(reknr), null, bank.getRekening(reknr));
     
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) throws RemoteException {
+        inform((int)evt.getNewValue());
     }
 }

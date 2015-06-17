@@ -1,9 +1,10 @@
 package bank.internettoegang;
 
+import RemoteObserver.RemotePropertyListener;
 import java.rmi.*;
 
 
-public interface IBalie extends Remote, RemoteObserver.RemotePublisher {
+public interface IBalie extends Remote, RemoteObserver.RemotePublisher, RemotePropertyListener {
   /**
    * creatie van een nieuwe bankrekening; het gegenereerde bankrekeningnummer is
    * identificerend voor de nieuwe bankrekening en heeft een saldo van 0 euro

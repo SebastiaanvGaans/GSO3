@@ -110,8 +110,12 @@ public class BankierSessieController implements Initializable, RemoteObserver.Re
                 taMessage.setText("can't transfer money to your own account");
             }
             long centen = (long) (Double.parseDouble(tfAmount.getText()) * 100);
+            
             if (sessie.maakOver(to, new Money(centen, Money.EURO))) {
+                
+                try{
                 balie.inform(to);
+                }catch (Exception e){}
                 Platform.runLater(new Runnable() {
 
                     @Override

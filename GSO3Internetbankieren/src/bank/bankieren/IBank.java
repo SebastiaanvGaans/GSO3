@@ -6,7 +6,7 @@ import fontys.util.*;
  * @author 871059
  * 
  */
-public interface IBank {
+public interface IBank extends  RemoteObserver.RemotePublisher {
 
     /**
      * creatie van een nieuwe bankrekening met een identificerend rekeningnummer; 
